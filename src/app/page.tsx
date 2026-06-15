@@ -81,15 +81,16 @@ export default function Home() {
     setError('');
     setProcessedImage(null);
 
-    // 验证文件
+    // 验证文件类型
     const allowedTypes = ['image/jpeg', 'image/png', 'image/heic', 'image/heif'];
     if (!allowedTypes.includes(file.type)) {
-      setError('仅支持 JPG、PNG、HEIC 格式');
+      setError(`不支持的文件格式「${file.type || '未知'}」。请上传 JPG、PNG 或 HEIC 格式的图片。`);
       return;
     }
 
+    // 验证文件大小
     if (file.size > 20 * 1024 * 1024) {
-      setError('文件大小不能超过 20MB');
+      setError(`文件过大（${(file.size / 1024 / 1024).toFixed(1)}MB），最大支持 20MB。请压缩后重试。`);
       return;
     }
 
@@ -240,19 +241,26 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* 标题区域 */}
         <div className="text-center mb-10">
-          <h2 className="font-serif-cn text-3xl md:text-4xl font-bold text-[#2c1810] mb-4">
+          <h2 className="font-serif-cn text-3xl md:text-4xl font-bold text-[#2c1810] mb-2">
             让珍贵回忆重现光彩
           </h2>
+          <p className="text-[#8b4513] font-medium text-base mb-3 tracking-wide">
+            ✨ AI Photo Restoration Tool — 智能老照片修复
+          </p>
           <p className="text-[#8b7355] text-lg max-w-2xl mx-auto">
             上传您的老照片，AI将自动修复折痕、污渍，提升清晰度，并为黑白照片上色
           </p>
+          <div className="mt-4 inline-flex items-center gap-2 bg-[#f5ebe0] border border-[#d4c4a8] rounded-full px-4 py-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-[#8b4513]" />
+            <span className="text-xs text-[#8b4513] font-medium">Powered by Replicate AI</span>
+          </div>
         </div>
 
         {/* 错误提示 */}
         {error && (
-          <Alert className="mb-6 bg-red-50 border-red-200">
-            <AlertCircle className="w-4 h-4 text-red-600" />
-            <AlertDescription className="text-red-700">{error}</AlertDescription>
+          <Alert className="mb-6 bg-red-50 border-2 border-red-300 shadow-sm">
+            <AlertCircle className="w-5 h-5 text-red-500" />
+            <AlertDescription className="text-red-700 font-medium text-sm">{error}</AlertDescription>
           </Alert>
         )}
 
@@ -285,6 +293,9 @@ export default function Home() {
                       <ImageIcon className="w-12 h-12 mx-auto text-[#d4c4a8] mb-3" />
                       <p className="text-[#8b7355] mb-1">点击或拖拽上传照片</p>
                       <p className="text-xs text-[#8b7355]/70">支持 JPG、PNG、HEIC，最大 20MB</p>
+                      <p className="text-xs text-[#8b4513]/80 mt-2 italic">
+                        💡 Best results: old photos with faces, scratches, or fading.
+                      </p>
                     </div>
                   )}
                 </div>
@@ -430,6 +441,18 @@ export default function Home() {
                     <p className="text-sm text-[#8b7355] mt-2 text-center">{processing.status}</p>
                   </div>
                 )}
+
+                {/* 社交证明 */}
+                <div className="mt-6 pt-4 border-t border-[#d4c4a8]/50">
+                  <div className="flex items-center justify-center gap-2 text-xs text-[#8b7355]">
+                    <div className="flex -space-x-1.5">
+                      <div className="w-6 h-6 rounded-full bg-[#d4a574] border-2 border-white flex items-center justify-center text-[10px] text-white">👨</div>
+                      <div className="w-6 h-6 rounded-full bg-[#8b4513] border-2 border-white flex items-center justify-center text-[10px] text-white">👩</div>
+                      <div className="w-6 h-6 rounded-full bg-[#a0522d] border-2 border-white flex items-center justify-center text-[10px] text-white">👴</div>
+                    </div>
+                    <span>Trusted by 100+ families to restore their memories</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -567,8 +590,9 @@ export default function Home() {
 
       {/* 页脚 */}
       <footer className="border-t border-[#d4c4a8] mt-16 py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center text-[#8b7355] text-sm">
-          <p> 时光修复师 - 用AI技术守护珍贵回忆</p>
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="text-[#8b7355] text-sm mb-2">时光修复师 — 用AI技术守护珍贵回忆</p>
+          <p className="text-[#8b7355]/60 text-xs">Used by photo restoration enthusiasts worldwide · Powered by Replicate AI</p>
         </div>
       </footer>
     </div>
