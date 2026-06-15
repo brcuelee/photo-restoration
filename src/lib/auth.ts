@@ -1,4 +1,4 @@
-import { sql } from '@vercel/postgres';
+import { sql } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 
 export async function createUser(email: string, password: string, name?: string) {
@@ -10,7 +10,7 @@ export async function createUser(email: string, password: string, name?: string)
       VALUES (${email}, ${hashedPassword}, ${name || email.split('@')[0]}, 3)
       RETURNING id, email, name, free_credits
     `;
-    return result.rows[0];
+    return result[0];
   } catch (error) {
     console.error('Error creating user:', error);
     throw new Error('用户已存在或创建失败');
@@ -23,11 +23,11 @@ export async function validateUser(email: string, password: string) {
       SELECT * FROM users WHERE email = ${email}
     `;
     
-    if (result.rows.length === 0) {
+    if (result.length === 0) {
       return null;
     }
     
-    const user = result.rows[0];
+    const user = result[0];
     const isValid = await bcrypt.compare(password, user.password);
     
     if (!isValid) {
@@ -53,16 +53,16 @@ export async function getUserByEmail(email: string) {
       SELECT id, email, name, free_credits, image FROM users WHERE email = ${email}
     `;
     
-    if (result.rows.length === 0) {
+    if (result.length === 0) {
       return null;
     }
     
     return {
-      id: result.rows[0].id,
-      email: result.rows[0].email,
-      name: result.rows[0].name,
-      freeCredits: result.rows[0].free_credits,
-      image: result.rows[0].image
+      id: result[0].id,
+      email: result[0].email,
+      name: result[0].name,
+      freeCredits: result[0].free_credits,
+      image: result[0].image
     };
   } catch (error) {
     console.error('Error getting user:', error);
@@ -80,11 +80,11 @@ export async function decrementFreeCredits(userId: number) {
       RETURNING free_credits
     `;
     
-    if (result.rows.length === 0) {
+    if (result.length === 0) {
       return null;
     }
     
-    return result.rows[0].free_credits;
+    return result[0].free_credits;
   } catch (error) {
     console.error('Error decrementing credits:', error);
     return null;

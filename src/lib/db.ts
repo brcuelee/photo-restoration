@@ -1,4 +1,6 @@
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
+
+export const sql = neon(process.env.DATABASE_URL!);
 
 // 用户表
 export async function createUsersTable() {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@vercel/postgres';
+import { sql } from '@/lib/db';
 import Replicate from 'replicate';
 
 const replicate = new Replicate({
@@ -41,7 +41,7 @@ async function upscaleImage(imageUrl: string, scale: number = 2) {
 // 智能上色 - DeOldify
 async function colorizeImage(imageUrl: string) {
   const output = await replicate.run(
-    "arielreplicate/deoldify_image:0da6e39d8525e094c5f0f44a4d5b3c0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e",
+    "arielreplicate/deoldify_image:0da6e39d8525e094c5f0f44a4d5b3c0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e0e",
     {
       input: {
         source_image: imageUrl,
@@ -72,15 +72,15 @@ export async function POST(request: NextRequest) {
       SELECT id, free_credits FROM users WHERE email = ${userEmail}
     `;
     
-    if (userResult.rows.length === 0) {
+    if (userResult.length === 0) {
       return NextResponse.json(
         { error: '用户不存在' },
         { status: 404 }
       );
     }
     
-    const userId = userResult.rows[0].id;
-    const freeCredits = userResult.rows[0].free_credits;
+    const userId = userResult[0].id;
+    const freeCredits = userResult[0].free_credits;
     
     if (freeCredits <= 0) {
       return NextResponse.json(
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
       RETURNING id
     `;
     
-    const imageId = imageRecord.rows[0].id;
+    const imageId = imageRecord[0].id;
     
     // 根据操作类型调用不同的AI模型
     let result;
